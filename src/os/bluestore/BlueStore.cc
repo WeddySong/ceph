@@ -7478,6 +7478,13 @@ void BlueStore::_wctx_finish(
       if (blob.is_compressed()) {
 	txc->statfs_delta.compressed() -= blob.get_compressed_payload_length();
       }
+      if (b->id >= 0) {
+	// explicitly remove from spanning map
+	dout(20) << __func__ << "  spanning_blob_map removing empty " << *b
+		 << dendl;
+	auto it = o->extent_map.spanning_blob_map.iterator_to(*b);
+	o->extent_map.spanning_blob_map.erase(it);
+      }
     }
     txc->statfs_delta.stored() -= lo.length;
     if (blob.is_compressed()) {
