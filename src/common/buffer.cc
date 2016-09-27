@@ -1163,7 +1163,7 @@ static simple_spinlock_t buffer_debug_lock = SIMPLE_SPINLOCK_INITIALIZER;
   template<bool is_const>
   void buffer::list::iterator_impl<is_const>::copy_deep(unsigned len, ptr &dest)
   {
-    if (p == ls->end())
+    if (len && p == ls->end())
       throw end_of_buffer();
     assert(p->length() > 0);
     dest = create(len);
@@ -1173,7 +1173,7 @@ static simple_spinlock_t buffer_debug_lock = SIMPLE_SPINLOCK_INITIALIZER;
   void buffer::list::iterator_impl<is_const>::copy_shallow(unsigned len,
 							   ptr &dest)
   {
-    if (p == ls->end())
+    if (len && p == ls->end())
       throw end_of_buffer();
     assert(p->length() > 0);
     unsigned howmuch = p->length() - p_off;
