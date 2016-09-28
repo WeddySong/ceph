@@ -6377,10 +6377,12 @@ void OSD::handle_scrub(MOSDScrub *m)
 	 p != m->scrub_pgs.end();
 	 ++p) {
       spg_t pcand;
-      auto pg_map_entry = pg_map.find(pcand);
-      if (osdmap->get_primary_shard(*p, &pcand) &&
-	  pg_map_entry != pg_map.end())
-	handle_pg_scrub(m, pg_map_entry->second);
+      if (osdmap->get_primary_shard(*p, &pcand)) {
+	auto pg_map_entry = pg_map.find(pcand);
+	if (pg_map_entry != pg_map.end()) {
+	  handle_pg_scrub(m, pg_map_entry->second);
+	}
+      }
     }
   }
 
@@ -6868,11 +6870,11 @@ void OSD::handle_osd_map(MOSDMap *m)
 void OSD::_committed_osd_maps(epoch_t first, epoch_t last, MOSDMap *m)
 {
   dout(10) << __func__ << " " << first << ".." << last << dendl;
-  Mutex::Locker l(osd_lock);
   if (is_stopping()) {
     dout(10) << __func__ << " bailing, we are shutting down" << dendl;
     return;
   }
+  Mutex::Locker l(osd_lock);
   map_lock.get_write();
 
   bool do_shutdown = false;

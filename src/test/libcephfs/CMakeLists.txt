@@ -4,8 +4,6 @@ if(${WITH_CEPHFS})
     readdir_r_cb.cc
     caps.cc
     multiclient.cc
-    flock.cc
-    recordlock.cc
     acl.cc
   )
   set_target_properties(ceph_test_libcephfs PROPERTIES COMPILE_FLAGS

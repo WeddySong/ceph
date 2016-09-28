@@ -475,9 +475,10 @@ int mirror_image_disable_internal(ImageCtx *ictx, bool force,
     info.obj_size = 1ULL << obj_order;
     info.num_objs = Striper::get_num_objects(ictx->layout, info.size);
     info.order = obj_order;
-    memcpy(&info.block_name_prefix, ictx->object_prefix.c_str(),
-	   min((size_t)RBD_MAX_BLOCK_NAME_SIZE,
-	       ictx->object_prefix.length() + 1));
+    strncpy(info.block_name_prefix, ictx->object_prefix.c_str(),
+            RBD_MAX_BLOCK_NAME_SIZE);
+    info.block_name_prefix[RBD_MAX_BLOCK_NAME_SIZE - 1] = '\0';
+
     // clear deprecated fields
     info.parent_pool = -1L;
     info.parent_name[0] = '\0';
@@ -1849,6 +1850,13 @@ int mirror_image_disable_internal(ImageCtx *ictx, bool force,
                      << "mask=" << features_mask << dendl;
       r = librbd::cls_client::set_features(&ictx->md_ctx, ictx->header_oid,
                                            new_features, features_mask);
+      if (!enabled && r == -EINVAL) {
+        // NOTE: infernalis OSDs will not accept a mask with new features, so
+        // re-attempt with a reduced mask.
+        features_mask &= ~RBD_FEATURE_JOURNALING;
+        r = librbd::cls_client::set_features(&ictx->md_ctx, ictx->header_oid,
+                                             new_features, features_mask);
+      }
       if (r < 0) {
         lderr(cct) << "failed to update features: " << cpp_strerror(r)
                    << dendl;

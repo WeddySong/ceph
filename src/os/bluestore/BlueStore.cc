@@ -1208,24 +1208,6 @@ void BlueStore::SharedBlob::put()
   }
 }
 
-
-// SharedBlobSet
-
-#undef dout_prefix
-#define dout_prefix *_dout << "bluestore.sharedblobset(" << this << ") "
-
-BlueStore::SharedBlobRef BlueStore::SharedBlobSet::lookup(uint64_t sbid)
-{
-  std::lock_guard<std::mutex> l(lock);
-  dummy.sbid = sbid;
-  auto p = uset.find(dummy);
-  if (p == uset.end()) {
-    return nullptr;
-  }
-  return &*p;
-}
-
-
 // Blob
 
 #undef dout_prefix
@@ -2128,7 +2110,7 @@ BlueStore::OnodeRef BlueStore::Collection::get_onode(
     on = new Onode(&onode_map, this, oid, key);
   } else {
     // loaded
-    assert(r >=0 );
+    assert(r >= 0);
     on = new Onode(&onode_map, this, oid, key);
     on->exists = true;
     bufferlist::iterator p = v.begin();
@@ -2197,6 +2179,7 @@ BlueStore::BlueStore(CephContext *cct, const string& path)
     kv_sync_thread(this),
     kv_stop(false),
     logger(NULL),
+    debug_read_error_lock("BlueStore::debug_read_error_lock"),
     csum_type(bluestore_blob_t::CSUM_CRC32C),
     sync_wal_apply(cct->_conf->bluestore_sync_wal_apply)
 {
@@ -2220,8 +2203,8 @@ BlueStore::~BlueStore()
 {
   for (auto f : finishers) {
     delete f;
-    f = NULL;
   }
+  finishers.clear();
 
   g_ceph_context->_conf->remove_observer(this);
   _shutdown_logger();
@@ -2239,7 +2222,6 @@ BlueStore::~BlueStore()
 const char **BlueStore::get_tracked_conf_keys() const
 {
   static const char* KEYS[] = {
-    "bluestore_csum",
     "bluestore_csum_type",
     "bluestore_compression",
     "bluestore_compression_algorithm",
@@ -2253,8 +2235,7 @@ const char **BlueStore::get_tracked_conf_keys() const
 void BlueStore::handle_conf_change(const struct md_config_t *conf,
 				   const std::set<std::string> &changed)
 {
-  if (changed.count("bluestore_csum_type") ||
-      changed.count("bluestore_csum")) {
+  if (changed.count("bluestore_csum_type")) {
     _set_csum();
   }
   if (changed.count("bluestore_compression") ||
@@ -2320,12 +2301,9 @@ void BlueStore::_set_compression()
 void BlueStore::_set_csum()
 {
   csum_type = bluestore_blob_t::CSUM_NONE;
-  if (g_conf->bluestore_csum) {
-    int t = bluestore_blob_t::get_csum_string_type(
-            g_conf->bluestore_csum_type);
-    if (t > bluestore_blob_t::CSUM_NONE)
-      csum_type = t;
-  }
+  int t = bluestore_blob_t::get_csum_string_type(g_conf->bluestore_csum_type);
+  if (t > bluestore_blob_t::CSUM_NONE)
+    csum_type = t;
 
   dout(10) << __func__ << " csum_type "
 	   << bluestore_blob_t::get_csum_type_string(csum_type)
@@ -4514,7 +4492,12 @@ int BlueStore::stat(
   c->cache->trim(
     g_conf->bluestore_onode_cache_size,
     g_conf->bluestore_buffer_cache_size);
-  return 0;
+  int r = 0;
+  if (_debug_mdata_eio(oid)) {
+    r = -EIO;
+    derr << __func__ << " " << c->cid << " " << oid << " INJECT EIO" << dendl;
+  }
+  return r;
 }
 
 int BlueStore::read(
@@ -4571,6 +4554,10 @@ int BlueStore::read(
   c->cache->trim(
     g_conf->bluestore_onode_cache_size,
     g_conf->bluestore_buffer_cache_size);
+  if (r == 0 && _debug_data_eio(oid)) {
+    r = -EIO;
+    derr << __func__ << " " << c->cid << " " << oid << " INJECT EIO" << dendl;
+  }
   dout(10) << __func__ << " " << cid << " " << oid
 	   << " 0x" << std::hex << offset << "~" << length << std::dec
 	   << " = " << r << dendl;
@@ -4741,8 +4728,7 @@ int BlueStore::_do_read(
     } else {
       for (auto reg : b2r_it->second) {
 	// determine how much of the blob to read
-	uint64_t chunk_size = bptr->get_blob().get_chunk_size(
-	  csum_type != bluestore_blob_t::CSUM_NONE, block_size);
+	uint64_t chunk_size = bptr->get_blob().get_chunk_size(true, block_size);
 	uint64_t r_off = reg.blob_xoffset;
 	uint64_t r_len = reg.length;
 	unsigned front = r_off % chunk_size;
@@ -4828,8 +4814,7 @@ int BlueStore::_verify_csum(OnodeRef& o,
 {
   int bad;
   uint64_t bad_csum;
-  int r = csum_type != bluestore_blob_t::CSUM_NONE ?
-    blob->verify_csum(blob_xoffset, bl, &bad, &bad_csum)  :0;
+  int r = blob->verify_csum(blob_xoffset, bl, &bad, &bad_csum);
   if (r < 0) {
     if (r == -1) {
       vector<bluestore_pextent_t> pex;
@@ -5017,6 +5002,10 @@ int BlueStore::getattr(
   c->cache->trim(
     g_conf->bluestore_onode_cache_size,
     g_conf->bluestore_buffer_cache_size);
+  if (r == 0 && _debug_mdata_eio(oid)) {
+    r = -EIO;
+    derr << __func__ << " " << c->cid << " " << oid << " INJECT EIO" << dendl;
+  }
   dout(10) << __func__ << " " << c->cid << " " << oid << " " << name
 	   << " = " << r << dendl;
   return r;
@@ -5061,6 +5050,10 @@ int BlueStore::getattrs(
   c->cache->trim(
     g_conf->bluestore_onode_cache_size,
     g_conf->bluestore_buffer_cache_size);
+  if (r == 0 && _debug_mdata_eio(oid)) {
+    r = -EIO;
+    derr << __func__ << " " << c->cid << " " << oid << " INJECT EIO" << dendl;
+  }
   dout(10) << __func__ << " " << c->cid << " " << oid
 	   << " = " << r << dendl;
   return r;
@@ -7343,8 +7336,9 @@ int BlueStore::_do_alloc_write(
 	     << dendl;
 
     // checksum
-    if (csum_type) {
-      b->dirty_blob().init_csum(csum_type, csum_order, csum_length);
+    int csum = csum_type.load();
+    if (csum) {
+      b->dirty_blob().init_csum(csum, csum_order, csum_length);
       b->dirty_blob().calc_csum(b_off, *l);
     }
     if (wi.mark_unused) {
@@ -7688,6 +7682,7 @@ int BlueStore::_do_remove(
     txc->t->rmkey(PREFIX_OBJ, s.key);
   }
   txc->t->rmkey(PREFIX_OBJ, o->key);
+  _debug_obj_on_delete(o->oid);
   return 0;
 }
 

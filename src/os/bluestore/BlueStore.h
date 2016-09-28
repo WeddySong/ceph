@@ -357,7 +357,15 @@ public:
       assert(n > 0);
     }
 
-    SharedBlobRef lookup(uint64_t sbid);
+    SharedBlobRef lookup(uint64_t sbid) {
+      std::lock_guard<std::mutex> l(lock);
+      dummy.sbid = sbid;
+      auto p = uset.find(dummy);
+      if (p == uset.end()) {
+        return nullptr;
+      }
+      return &*p;
+    }
 
     void add(SharedBlob *sb) {
       std::lock_guard<std::mutex> l(lock);
@@ -1324,7 +1332,11 @@ private:
   std::mutex reap_lock;
   list<CollectionRef> removed_collections;
 
-  int csum_type;
+  RWLock debug_read_error_lock;
+  set<ghobject_t, ghobject_t::BitwiseComparator> debug_data_error_objects;
+  set<ghobject_t, ghobject_t::BitwiseComparator> debug_mdata_error_objects;
+
+  std::atomic<int> csum_type;
 
   uint64_t block_size;     ///< block size of block device (power of 2)
   uint64_t block_mask;     ///< mask to get just the block offset
@@ -1662,6 +1674,38 @@ public:
     vector<Transaction>& tls,
     TrackedOpRef op = TrackedOpRef(),
     ThreadPool::TPHandle *handle = NULL) override;
+
+  // error injection
+  void inject_data_error(const ghobject_t& o) override {
+    RWLock::WLocker l(debug_read_error_lock);
+    debug_data_error_objects.insert(o);
+  }
+  void inject_mdata_error(const ghobject_t& o) override {
+    RWLock::WLocker l(debug_read_error_lock);
+    debug_mdata_error_objects.insert(o);
+  }
+private:
+  bool _debug_data_eio(const ghobject_t& o) {
+    if (!g_conf->bluestore_debug_inject_read_err) {
+      return false;
+    }
+    RWLock::RLocker l(debug_read_error_lock);
+    return debug_data_error_objects.count(o);
+  }
+  bool _debug_mdata_eio(const ghobject_t& o) {
+    if (!g_conf->bluestore_debug_inject_read_err) {
+      return false;
+    }
+    RWLock::RLocker l(debug_read_error_lock);
+    return debug_mdata_error_objects.count(o);
+  }
+  void _debug_obj_on_delete(const ghobject_t& o) {
+    if (g_conf->bluestore_debug_inject_read_err) {
+      RWLock::WLocker l(debug_read_error_lock);
+      debug_data_error_objects.erase(o);
+      debug_mdata_error_objects.erase(o);
+    }
+  }
 
 private:
 

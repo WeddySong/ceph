@@ -231,7 +231,7 @@ OPTION(mon_osd_adjust_down_out_interval, OPT_BOOL, true)  // true if we should s
 OPTION(mon_osd_auto_mark_in, OPT_BOOL, false)         // mark any booting osds 'in'
 OPTION(mon_osd_auto_mark_auto_out_in, OPT_BOOL, true) // mark booting auto-marked-out osds 'in'
 OPTION(mon_osd_auto_mark_new_in, OPT_BOOL, true)      // mark booting new osds 'in'
-OPTION(mon_osd_down_out_interval, OPT_INT, 300) // seconds
+OPTION(mon_osd_down_out_interval, OPT_INT, 600) // seconds
 OPTION(mon_osd_down_out_subtree_limit, OPT_STR, "rack")   // smallest crush unit/type that we will not automatically mark out
 OPTION(mon_osd_min_up_ratio, OPT_DOUBLE, .3)    // min osds required to be up to mark things down
 OPTION(mon_osd_min_in_ratio, OPT_DOUBLE, .3)   // min osds required to be in to mark things out
@@ -961,8 +961,7 @@ OPTION(bluestore_block_wal_path, OPT_STR, "")
 OPTION(bluestore_block_wal_size, OPT_U64, 96 * 1024*1024) // rocksdb wal
 OPTION(bluestore_block_wal_create, OPT_BOOL, false)
 OPTION(bluestore_block_preallocate_file, OPT_BOOL, false) //whether preallocate space if block/db_path/wal_path is file rather that block device.
-OPTION(bluestore_csum, OPT_BOOL, true)
-OPTION(bluestore_csum_type, OPT_STR, "crc32c")
+OPTION(bluestore_csum_type, OPT_STR, "crc32c") // none|xxhash32|xxhash64|crc32c|crc32c_16|crc32c_8
 OPTION(bluestore_min_csum_block, OPT_U32, 4096)
 OPTION(bluestore_max_csum_block, OPT_U32, 64*1024)
 OPTION(bluestore_min_alloc_size, OPT_U32, 0)
@@ -1019,6 +1018,7 @@ OPTION(bluestore_debug_small_allocations, OPT_INT, 0)
 OPTION(bluestore_debug_freelist, OPT_BOOL, false)
 OPTION(bluestore_debug_prefill, OPT_FLOAT, 0)
 OPTION(bluestore_debug_prefragment_max, OPT_INT, 1048576)
+OPTION(bluestore_debug_inject_read_err, OPT_BOOL, false)
 OPTION(bluestore_inject_wal_apply_delay, OPT_FLOAT, 0)
 OPTION(bluestore_shard_finishers, OPT_BOOL, false)
 

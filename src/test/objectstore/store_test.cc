@@ -34,6 +34,8 @@
 #include <gtest/gtest.h>
 
 #include "include/unordered_map.h"
+#include "store_test_fixture.h"
+
 typedef boost::mt11213b gen_type;
 
 #if GTEST_HAS_PARAM_TEST
@@ -83,51 +85,6 @@ int apply_transaction(
   }
 }
 
-class StoreTest : public ::testing::TestWithParam<const char*> {
-public:
-  boost::scoped_ptr<ObjectStore> store;
-
-  StoreTest() : store(0) {}
-
-  void rm_r(string path) {
-    string cmd = string("rm -r ") + path;
-    cout << "==> " << cmd << std::endl;
-    int r = ::system(cmd.c_str());
-    if (r) {
-      cerr << "failed with exit code " << r
-	   << ", continuing anyway" << std::endl;
-    }
-  }
-
-  virtual void SetUp() {
-    int r = ::mkdir("store_test_temp_dir", 0777);
-    if (r < 0) {
-      r = -errno;
-      cerr << __func__ << ": unable to create store_test_temp_dir" << ": " << cpp_strerror(r) << std::endl;
-      return;
-    }
-
-    ObjectStore *store_ = ObjectStore::create(g_ceph_context,
-                                              string(GetParam()),
-                                              string("store_test_temp_dir"),
-                                              string("store_test_temp_journal"));
-    if (!store_) {
-      cerr << __func__ << ": objectstore type " << string(GetParam()) << " doesn't exist yet!" << std::endl;
-      return;
-    }
-    EXPECT_EQ(store_->mkfs(), 0);
-    EXPECT_EQ(store_->mount(), 0);
-    store.reset(store_);
-  }
-
-  virtual void TearDown() {
-    if (store) {
-      int r = store->umount();
-      EXPECT_EQ(r, 0);
-      rm_r("store_test_temp_dir");
-    }
-  }
-};
 
 bool sorted(const vector<ghobject_t> &in, bool bitwise) {
   ghobject_t start;
@@ -142,6 +99,14 @@ bool sorted(const vector<ghobject_t> &in, bool bitwise) {
   }
   return true;
 }
+
+class StoreTest : public StoreTestFixture,
+                  public ::testing::WithParamInterface<const char*> {
+public:
+  StoreTest()
+    : StoreTestFixture(GetParam())
+  {}
+};
 
 TEST_P(StoreTest, collect_metadata) {
   map<string,string> pm;
@@ -3995,9 +3960,8 @@ TEST_P(StoreTest, SyntheticMatrixCsumAlgorithm) {
     { "max_size", "1048576", 0 },
     { "alignment", "16", 0 },
     { "bluestore_min_alloc_size", "65536", 0 },
-    { "bluestore_csum", "true", 0 },
     { "bluestore_csum_type", "crc32c", "crc32c_16", "crc32c_8", "xxhash32",
-      "xxhash64", 0 },
+      "xxhash64", "none", 0 },
     { 0 },
   };
   do_matrix(m, store);
@@ -4013,7 +3977,6 @@ TEST_P(StoreTest, SyntheticMatrixCsumVsCompression) {
     { "alignment", "512", 0 },
     { "bluestore_min_alloc_size", "32768", "4096", 0 },
     { "bluestore_compression", "force", "none", 0},
-    { "bluestore_csum", "true", 0 },
     { "bluestore_csum_type", "crc32c", 0 },
     { "bluestore_default_buffered_read", "true", "false", 0 },
     { 0 },
@@ -4061,7 +4024,7 @@ TEST_P(StoreTest, SyntheticMatrixNoCsum) {
     { "alignment", "512", 0 },
     { "bluestore_min_alloc_size", "65536", "4096", 0 },
     { "bluestore_compression", "force", "none", 0},
-    { "bluestore_csum", "false", 0 },
+    { "bluestore_csum_type", "none", 0},
     { "bluestore_default_buffered_read", "true", "false", 0 },
     { 0 },
   };
@@ -5060,7 +5023,6 @@ TEST_P(StoreTest, TryMoveRename) {
 TEST_P(StoreTest, BluestoreOnOffCSumTest) {
   if (string(GetParam()) != "bluestore")
     return;
-  g_conf->set_val("bluestore_csum", "true");
   g_conf->set_val("bluestore_csum_type", "crc32c");
   g_conf->apply_changes(NULL);
 
@@ -5094,8 +5056,7 @@ TEST_P(StoreTest, BluestoreOnOffCSumTest) {
     r = apply_transaction(store, &osr, std::move(t));
     ASSERT_EQ(r, 0);
 
-    g_conf->set_val("bluestore_csum", "false");
-    g_conf->set_val("bluestore_csum_type", "crc32c");
+    g_conf->set_val("bluestore_csum_type", "none");
     g_conf->apply_changes(NULL);
 
     bufferlist in;
@@ -5106,9 +5067,6 @@ TEST_P(StoreTest, BluestoreOnOffCSumTest) {
   }
   {
     //write with csum disabled followed by read with csum enabled
-    g_conf->set_val("bluestore_csum", "false");
-    g_conf->set_val("bluestore_csum_type", "crc32c");
-    g_conf->apply_changes(NULL);
 
     size_t block_size = 64*1024;
     ObjectStore::Transaction t;
@@ -5122,7 +5080,6 @@ TEST_P(StoreTest, BluestoreOnOffCSumTest) {
     r = apply_transaction(store, &osr, std::move(t));
     ASSERT_EQ(r, 0);
 
-    g_conf->set_val("bluestore_csum", "true");
     g_conf->set_val("bluestore_csum_type", "crc32c");
     g_conf->apply_changes(NULL);
 
@@ -5133,9 +5090,6 @@ TEST_P(StoreTest, BluestoreOnOffCSumTest) {
   }
   {
     //'mixed' non-overlapping writes to the same blob 
-    g_conf->set_val("bluestore_csum", "true");
-    g_conf->set_val("bluestore_csum_type", "crc32c");
-    g_conf->apply_changes(NULL);
 
     ObjectStore::Transaction t;
     bufferlist bl, orig;
@@ -5148,8 +5102,7 @@ TEST_P(StoreTest, BluestoreOnOffCSumTest) {
     r = apply_transaction(store, &osr, std::move(t));
     ASSERT_EQ(r, 0);
 
-    g_conf->set_val("bluestore_csum", "false");
-    g_conf->set_val("bluestore_csum_type", "crc32c");
+    g_conf->set_val("bluestore_csum_type", "none");
     g_conf->apply_changes(NULL);
 
     ObjectStore::Transaction t2;
@@ -5167,7 +5120,6 @@ TEST_P(StoreTest, BluestoreOnOffCSumTest) {
     ASSERT_EQ((int)block_size, r);
     ASSERT_TRUE(bl_eq(orig, in));
 
-    g_conf->set_val("bluestore_csum", "true");
     g_conf->set_val("bluestore_csum_type", "crc32c");
     g_conf->apply_changes(NULL);
     in.clear();
@@ -5181,9 +5133,6 @@ TEST_P(StoreTest, BluestoreOnOffCSumTest) {
   }
   {
     //partially blob overwrite under a different csum enablement mode
-    g_conf->set_val("bluestore_csum", "true");
-    g_conf->set_val("bluestore_csum_type", "crc32c");
-    g_conf->apply_changes(NULL);
 
     ObjectStore::Transaction t;
     bufferlist bl, orig, orig2;
@@ -5198,8 +5147,7 @@ TEST_P(StoreTest, BluestoreOnOffCSumTest) {
     r = apply_transaction(store, &osr, std::move(t));
     ASSERT_EQ(r, 0);
 
-    g_conf->set_val("bluestore_csum", "false");
-    g_conf->set_val("bluestore_csum_type", "crc32c");
+    g_conf->set_val("bluestore_csum_type", "none");
     g_conf->apply_changes(NULL);
 
     ObjectStore::Transaction t2;
@@ -5224,7 +5172,6 @@ TEST_P(StoreTest, BluestoreOnOffCSumTest) {
     ASSERT_EQ((int)block_size, r);
     ASSERT_TRUE(bl_eq(orig2, in));
 
-    g_conf->set_val("bluestore_csum", "true");
     g_conf->set_val("bluestore_csum_type", "crc32c");
     g_conf->apply_changes(NULL);
 
@@ -5252,9 +5199,6 @@ TEST_P(StoreTest, BluestoreOnOffCSumTest) {
     r = apply_transaction(store, &osr, std::move(t));
     ASSERT_EQ(r, 0);
   }
-  g_conf->set_val("bluestore_csum", "true");
-  g_conf->set_val("bluestore_csum_type", "crc32c");
-  g_conf->apply_changes(NULL);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -5369,7 +5313,6 @@ TEST_P(StoreTest, Many4KWritesTest) {
 TEST_P(StoreTest, Many4KWritesNoCSumTest) {
   if (string(GetParam()) != "bluestore")
     return;
-  g_conf->set_val("bluestore_csum", "false");
   g_conf->set_val("bluestore_csum_type", "none");
   g_ceph_context->_conf->apply_changes(NULL);
   store_statfs_t res_stat;
@@ -5379,7 +5322,6 @@ TEST_P(StoreTest, Many4KWritesNoCSumTest) {
 
   ASSERT_LE(res_stat.stored, max_object);
   ASSERT_EQ(res_stat.allocated, max_object);
-  g_conf->set_val("bluestore_csum", "true");
   g_conf->set_val("bluestore_csum_type", "crc32c");
 }
 
