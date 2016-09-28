@@ -60,6 +60,7 @@ enum {
   l_bluestore_state_done_lat,
   l_bluestore_compress_lat,
   l_bluestore_decompress_lat,
+  l_bluestore_csum_lat,
   l_bluestore_compress_success_count,
   l_bluestore_write_pad_bytes,
   l_bluestore_wal_write_ops,
@@ -554,6 +555,7 @@ public:
 
     ExtentMap(Onode *o);
     ~ExtentMap() {
+      spanning_blob_map.clear_and_dispose([&](Blob *b) { b->put(); });
       extent_map.clear_and_dispose([&](Extent *e) { delete e; });
     }
 

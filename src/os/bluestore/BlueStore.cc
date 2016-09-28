@@ -1888,6 +1888,20 @@ int BlueStore::ExtentMap::compress_extent_map(uint64_t offset, uint64_t length)
   if (p != extent_map.begin()) {
     --p;  // start to the left of offset
   }
+
+  // identify the *next* shard
+  auto pshard = shards.begin();
+  while (pshard != shards.end() &&
+	 p->logical_offset >= pshard->offset) {
+    ++pshard;
+  }
+  uint64_t shard_end;
+  if (pshard != shards.end()) {
+    shard_end = pshard->offset;
+  } else {
+    shard_end = OBJECT_MAX_SIZE;
+  }
+
   auto n = p;
   for (++n; n != extent_map.end(); p = n++) {
     if (n->logical_offset > offset + length) {
@@ -1896,13 +1910,25 @@ int BlueStore::ExtentMap::compress_extent_map(uint64_t offset, uint64_t length)
     while (n != extent_map.end() &&
 	   p->logical_offset + p->length == n->logical_offset &&
 	   p->blob == n->blob &&
-	   p->blob_offset + p->length == n->blob_offset) {
+	   p->blob_offset + p->length == n->blob_offset &&
+	   n->logical_offset < shard_end) {
+      dout(20) << __func__ << " 0x" << std::hex << offset << "~" << length
+	       << " next shard 0x" << shard_end << std::dec
+	       << " merging " << *p << " and " << *n << dendl;
       p->length += n->length;
       rm(n++);
       ++removed;
     }
     if (n == extent_map.end()) {
       break;
+    }
+    if (n->logical_offset >= shard_end) {
+      ++pshard;
+      if (pshard != shards.end()) {
+	shard_end = pshard->offset;
+      } else {
+	shard_end = OBJECT_MAX_SIZE;
+      }
     }
   }
   return removed;
@@ -2342,6 +2368,8 @@ void BlueStore::_init_logger()
     "Average compress latency");
   b.add_time_avg(l_bluestore_decompress_lat, "decompress_lat",
     "Average decompress latency");
+  b.add_time_avg(l_bluestore_csum_lat, "csum_lat",
+    "Average checksum latency");
   b.add_u64(l_bluestore_compress_success_count, "compress_success_count",
     "Sum for beneficial compress ops");
 
@@ -3560,6 +3588,36 @@ int BlueStore::mkfs()
     goto out_close_alloc;
   dout(10) << __func__ << " success" << dendl;
 
+  if (bluefs &&
+      g_conf->bluestore_precondition_bluefs > 0) {
+    dout(10) << __func__ << " preconditioning with "
+	     << pretty_si_t(g_conf->bluestore_precondition_bluefs)
+	     << " in blocks of "
+	     << pretty_si_t(g_conf->bluestore_precondition_bluefs_block)
+	     << dendl;
+    unsigned n = g_conf->bluestore_precondition_bluefs /
+      g_conf->bluestore_precondition_bluefs_block;
+    bufferlist bl;
+    bufferptr bp(g_conf->bluestore_precondition_bluefs_block);
+    for (unsigned i=0; i < g_conf->bluestore_precondition_bluefs_block; ++i) {
+      bp[i] = rand();
+    }
+    bl.append(bp);
+    string key1("a");
+    string key2("b");
+    for (unsigned i=0; i < n; ++i) {
+      KeyValueDB::Transaction t = db->get_transaction();
+      t->set(PREFIX_SUPER, (i & 1) ? key1 : key2, bl);
+      t->rmkey(PREFIX_SUPER, (i & 1) ? key2 : key1);
+      db->submit_transaction_sync(t);
+    }
+    KeyValueDB::Transaction t = db->get_transaction();
+    t->rmkey(PREFIX_SUPER, key1);
+    t->rmkey(PREFIX_SUPER, key2);
+    db->submit_transaction_sync(t);
+    dout(10) << __func__ << " done preconditioning" << dendl;
+  }
+
  out_close_alloc:
   _close_alloc();
  out_close_fm:
@@ -3945,6 +4003,7 @@ int BlueStore::fsck()
         if (expecting_shards.empty()) {
           derr << __func__ << pretty_binary_string(it->key())
                << " is unexpected" << dendl;
+          ++errors;
           continue;
         }
 	while (expecting_shards.front() > it->key()) {
@@ -3962,8 +4021,8 @@ int BlueStore::fsck()
       }
       int r = get_key_object(it->key(), &oid);
       if (r < 0) {
-	dout(30) << __func__ << "  bad object key "
-		 << pretty_binary_string(it->key()) << dendl;
+        derr << __func__ << "  bad object key "
+             << pretty_binary_string(it->key()) << dendl;
 	++errors;
 	continue;
       }
@@ -3982,8 +4041,8 @@ int BlueStore::fsck()
 	  }
 	}
 	if (!c) {
-	  dout(30) << __func__ << "  stray object " << oid
-		   << " not owned by any collection" << dendl;
+          derr << __func__ << "  stray object " << oid
+               << " not owned by any collection" << dendl;
 	  ++errors;
 	  continue;
 	}
@@ -4115,7 +4174,6 @@ int BlueStore::fsck()
 	    dout(30) << __func__
 		     << "  got " << pretty_binary_string(it->key())
 		     << " -> " << user_key << dendl;
-	    assert(it->key() < tail);
 	  }
 	  it->next();
 	}
@@ -4812,6 +4870,7 @@ int BlueStore::_verify_csum(OnodeRef& o,
 {
   int bad;
   uint64_t bad_csum;
+  utime_t start = ceph_clock_now(g_ceph_context);
   int r = blob->verify_csum(blob_xoffset, bl, &bad, &bad_csum);
   if (r < 0) {
     if (r == -1) {
@@ -4834,10 +4893,9 @@ int BlueStore::_verify_csum(OnodeRef& o,
     } else {
       derr << __func__ << " failed with exit code: " << cpp_strerror(r) << dendl;
     }
-    return r;
-  } else {
-    return 0;
   }
+  logger->tinc(l_bluestore_csum_lat, ceph_clock_now(g_ceph_context) - start);
+  return r;
 }
 
 int BlueStore::_decompress(bufferlist& source, bufferlist* result)
@@ -4951,7 +5009,7 @@ int BlueStore::fiemap(
     g_conf->bluestore_buffer_cache_size);
   ::encode(m, bl);
   dout(20) << __func__ << " 0x" << std::hex << offset << "~" << length
-	   << " size = 0 (" << m << ")" << std::dec << dendl;
+	   << " size = 0x(" << m << ")" << std::dec << dendl;
   return 0;
 }
 
@@ -7421,6 +7479,12 @@ void BlueStore::_wctx_finish(
       }
     }
     delete &lo;
+    if (b->id >= 0 && b->ref_map.empty()) {
+      dout(20) << __func__ << "  spanning_blob_map removing empty " << *b
+	       << dendl;
+      auto it = o->extent_map.spanning_blob_map.iterator_to(*b);
+      o->extent_map.spanning_blob_map.erase(it);
+    }
   }
 }
 
