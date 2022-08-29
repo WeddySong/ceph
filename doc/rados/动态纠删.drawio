@@ -1,1 +1,91 @@
-<mxfile host="app.diagrams.net" modified="2022-08-29T09:05:15.484Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36" version="20.2.7" etag="r0S6xV5qohvWlHZHoJpQ" type="github"><diagram id="IIymxBMZJr6deW5JzKop">UzV2zq1wL0osyPDNT0nNUTV2VTV2LsrPL4GwciucU3NyVI0MMlNUjV1UjYwMgFjVyA2HrCFY1qAgsSg1rwSLBiADYTaQg2Y1AA==</diagram></mxfile>
+<mxfile host="app.diagrams.net" modified="2022-08-29T09:34:39.450Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36" etag="6lK-b9FIJe7tLgUnTqqI" version="20.2.7" type="github">
+  <diagram id="IIymxBMZJr6deW5JzKop" name="第 1 页">
+    <mxGraphModel dx="1422" dy="748" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-11" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="ZoU7mPrhoWQByhyqX2Hw-1" target="ZoU7mPrhoWQByhyqX2Hw-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-1" value="业务client" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="40" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="ZoU7mPrhoWQByhyqX2Hw-2" target="ZoU7mPrhoWQByhyqX2Hw-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-2" value="nfs/samba/s3/iscsi client" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="120" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-13" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="ZoU7mPrhoWQByhyqX2Hw-3" target="ZoU7mPrhoWQByhyqX2Hw-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-3" value="rgw/rbd/cephfs/ceph-fuse" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="200" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-14" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="ZoU7mPrhoWQByhyqX2Hw-4" target="ZoU7mPrhoWQByhyqX2Hw-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-4" value="librados/libceph.ko" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="280" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-15" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="ZoU7mPrhoWQByhyqX2Hw-5" target="ZoU7mPrhoWQByhyqX2Hw-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-5" value="osd" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="360" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-6" value="磁盘" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="440" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-8" value="&lt;span style=&quot;&quot;&gt;对外业务客户端&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry y="125" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-9" value="ceph 客户端&lt;br&gt;对外业务服务端" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry y="200" width="110" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-10" value="&lt;span style=&quot;&quot;&gt;rados API库&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="10" y="285" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-16" value="代理服务&lt;br&gt;（根据对应的规则选择不同的纠删存储实例）" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="480" y="80" width="80" height="360" as="geometry" />
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-20" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;dashed=1;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="180" y="340" as="sourcePoint" />
+            <mxPoint x="480" y="340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-25" value="API层和代理服务交互" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="ZoU7mPrhoWQByhyqX2Hw-20">
+          <mxGeometry x="-0.1733" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-21" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;dashed=1;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="180" y="420" as="sourcePoint" />
+            <mxPoint x="480" y="420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-26" value="主osd与代理服务交互" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="ZoU7mPrhoWQByhyqX2Hw-21">
+          <mxGeometry x="-0.1133" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-22" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;dashed=1;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="180" y="259.5" as="sourcePoint" />
+            <mxPoint x="480" y="259.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-24" value="ceph 客户端和代理服务交互" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="ZoU7mPrhoWQByhyqX2Hw-22">
+          <mxGeometry x="-0.0733" y="1" relative="1" as="geometry">
+            <mxPoint y="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-23" value="primary osd" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="10" y="365" width="90" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
