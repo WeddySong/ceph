@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2022-08-29T09:34:39.450Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36" etag="6lK-b9FIJe7tLgUnTqqI" version="20.2.7" type="github">
+<mxfile host="app.diagrams.net" modified="2022-08-29T09:59:34.284Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36" etag="5Fn9w724qgPdkGNf12Pt" version="20.2.7" type="github">
   <diagram id="IIymxBMZJr6deW5JzKop" name="第 1 页">
     <mxGraphModel dx="1422" dy="748" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -60,30 +60,46 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-21" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;dashed=1;" edge="1" parent="1">
-          <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="180" y="420" as="sourcePoint" />
-            <mxPoint x="480" y="420" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-26" value="主osd与代理服务交互" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="ZoU7mPrhoWQByhyqX2Hw-21">
-          <mxGeometry x="-0.1133" y="-1" relative="1" as="geometry">
-            <mxPoint as="offset" />
-          </mxGeometry>
-        </mxCell>
         <mxCell id="ZoU7mPrhoWQByhyqX2Hw-22" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;dashed=1;" edge="1" parent="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="180" y="259.5" as="sourcePoint" />
-            <mxPoint x="480" y="259.5" as="targetPoint" />
+            <mxPoint x="179" y="180" as="sourcePoint" />
+            <mxPoint x="479" y="180" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-24" value="ceph 客户端和代理服务交互" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="ZoU7mPrhoWQByhyqX2Hw-22">
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-24" value="业务客户端和代理服务交互" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="ZoU7mPrhoWQByhyqX2Hw-22">
           <mxGeometry x="-0.0733" y="1" relative="1" as="geometry">
             <mxPoint y="1" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="ZoU7mPrhoWQByhyqX2Hw-23" value="primary osd" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="10" y="365" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-27" value="主osd选择动态选择纠删算法" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="244" y="365" width="170" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-28" value="2" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="310" y="230" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-29" value="3" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="310" y="310" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-30" value="4" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="310" y="350" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-33" value="1" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="310" y="150" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-34" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;dashed=1;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="180" y="259.5" as="sourcePoint" />
+            <mxPoint x="480" y="259.5" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ZoU7mPrhoWQByhyqX2Hw-35" value="ceph客户端与代理服务交互" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="ZoU7mPrhoWQByhyqX2Hw-34">
+          <mxGeometry x="-0.1733" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>
