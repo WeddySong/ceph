@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2024-06-13T06:10:27.123Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36" etag="W33BAk_RPds3bldyjft0" version="24.5.4" type="github">
+<mxfile host="app.diagrams.net" modified="2024-06-13T07:00:08.968Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36" etag="jMlUPUulL4lw52eNdVEi" version="24.5.4" type="github">
   <diagram name="第 1 页" id="J4ewOfoG2B0qvy7xSNE1">
     <mxGraphModel dx="2221" dy="685" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -10,7 +10,14 @@
         <mxCell id="EaZmeOUb9PgvSFKYmNDL-1" value="main()" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="320" width="90" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="EaZmeOUb9PgvSFKYmNDL-12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="EaZmeOUb9PgvSFKYmNDL-8" target="EaZmeOUb9PgvSFKYmNDL-11">
+        <mxCell id="EaZmeOUb9PgvSFKYmNDL-12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="EaZmeOUb9PgvSFKYmNDL-22" target="EaZmeOUb9PgvSFKYmNDL-11">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="365" y="150" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="EaZmeOUb9PgvSFKYmNDL-56" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="EaZmeOUb9PgvSFKYmNDL-8" target="EaZmeOUb9PgvSFKYmNDL-22">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="EaZmeOUb9PgvSFKYmNDL-8" value="cli.execute()" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
@@ -37,9 +44,6 @@
         <mxCell id="EaZmeOUb9PgvSFKYmNDL-17" value="5s调用一次，日志打印算力信息" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="450" y="325" width="190" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="EaZmeOUb9PgvSFKYmNDL-23" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="EaZmeOUb9PgvSFKYmNDL-18" target="EaZmeOUb9PgvSFKYmNDL-22">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
         <mxCell id="EaZmeOUb9PgvSFKYmNDL-26" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="EaZmeOUb9PgvSFKYmNDL-18" target="EaZmeOUb9PgvSFKYmNDL-25">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
@@ -52,14 +56,14 @@
             <mxPoint x="440" y="270" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="EaZmeOUb9PgvSFKYmNDL-21" value="池管理类构造函数生成Farm" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="70" y="160" width="170" height="30" as="geometry" />
+        <mxCell id="EaZmeOUb9PgvSFKYmNDL-21" value="构造初始化池管理类" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="90" y="160" width="130" height="30" as="geometry" />
         </mxCell>
         <mxCell id="EaZmeOUb9PgvSFKYmNDL-22" value="Farm::Farm()" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="-20" y="280" width="90" height="40" as="geometry" />
+          <mxGeometry x="460" y="130" width="90" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="EaZmeOUb9PgvSFKYmNDL-24" value="数据采集器" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="-110" y="285" width="80" height="30" as="geometry" />
+        <mxCell id="EaZmeOUb9PgvSFKYmNDL-24" value="初始化数据采集器" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="560" y="135" width="120" height="30" as="geometry" />
         </mxCell>
         <mxCell id="EaZmeOUb9PgvSFKYmNDL-28" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="EaZmeOUb9PgvSFKYmNDL-25" target="EaZmeOUb9PgvSFKYmNDL-27">
           <mxGeometry relative="1" as="geometry" />
