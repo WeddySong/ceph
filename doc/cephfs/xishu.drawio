@@ -328,7 +328,7 @@
         <mxCell id="TJpdDe52cbkIrQes-nT3-35" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="TJpdDe52cbkIrQes-nT3-25" target="TJpdDe52cbkIrQes-nT3-34">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="TJpdDe52cbkIrQes-nT3-25" value="&lt;span style=&quot;text-wrap-mode: nowrap;&quot;&gt;更新平台显示&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="TJpdDe52cbkIrQes-nT3-25" value="&lt;span style=&quot;text-wrap-mode: nowrap;&quot;&gt;更新平台显示&lt;/span&gt;&lt;span style=&quot;text-wrap-mode: nowrap; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;vip节点������标记&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="-207" y="70" width="80" height="30" as="geometry" />
         </mxCell>
         <mxCell id="TJpdDe52cbkIrQes-nT3-29" value="通知（可走原节点上/离线流程，携带vip）" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
@@ -349,7 +349,7 @@
           <mxGeometry x="-518" y="250" width="82" height="30" as="geometry" />
         </mxCell>
         <mxCell id="TJpdDe52cbkIrQes-nT3-34" value="数据库保存vip组的信息" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="-207" y="140" width="80" height="30" as="geometry" />
+          <mxGeometry x="-207" y="130" width="80" height="30" as="geometry" />
         </mxCell>
         <mxCell id="Fmsyl7l4nBtQ7iXFPRKi-8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="TJpdDe52cbkIrQes-nT3-36" target="Fmsyl7l4nBtQ7iXFPRKi-7">
           <mxGeometry relative="1" as="geometry" />
