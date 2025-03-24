@@ -349,7 +349,7 @@
         <mxCell id="TJpdDe52cbkIrQes-nT3-37" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="TJpdDe52cbkIrQes-nT3-31" target="TJpdDe52cbkIrQes-nT3-36">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="TJpdDe52cbkIrQes-nT3-31" value="重新创建录像服务容器" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="TJpdDe52cbkIrQes-nT3-31" value="更新环境VIP变量信息" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="-372.25" y="155" width="101.5" height="30" as="geometry" />
         </mxCell>
         <mxCell id="TJpdDe52cbkIrQes-nT3-34" value="保存vip组的信息" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
