@@ -331,7 +331,7 @@
         <mxCell id="TJpdDe52cbkIrQes-nT3-25" value="&lt;span style=&quot;text-wrap-mode: nowrap;&quot;&gt;更新平台显示&lt;/span&gt;&lt;span style=&quot;text-wrap-mode: nowrap; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;vip节点������标记&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="-207" y="70" width="80" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="TJpdDe52cbkIrQes-nT3-29" value="通知（可走原节点上/离线流程，携带vip）" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+        <mxCell id="TJpdDe52cbkIrQes-nT3-29" value="通知（可走原节点上/离线流程，本节点有vip时，携带vip）" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="-410" y="60" width="180" height="30" as="geometry" />
         </mxCell>
         <mxCell id="TJpdDe52cbkIrQes-nT3-32" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="TJpdDe52cbkIrQes-nT3-30" target="TJpdDe52cbkIrQes-nT3-31">
