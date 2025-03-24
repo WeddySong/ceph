@@ -282,7 +282,7 @@
         <mxCell id="TJpdDe52cbkIrQes-nT3-6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="TJpdDe52cbkIrQes-nT3-3" target="TJpdDe52cbkIrQes-nT3-5">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="TJpdDe52cbkIrQes-nT3-3" value="配置rbd资源" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="TJpdDe52cbkIrQes-nT3-3" value="配置rbd资源服务" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="-770" y="135" width="80" height="30" as="geometry" />
         </mxCell>
         <mxCell id="TJpdDe52cbkIrQes-nT3-5" value="格式化rbd" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
@@ -352,8 +352,8 @@
         <mxCell id="TJpdDe52cbkIrQes-nT3-31" value="重新创建录像服务容器" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="-372.25" y="155" width="101.5" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="TJpdDe52cbkIrQes-nT3-34" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="-207" y="180" width="80" height="30" as="geometry" />
+        <mxCell id="TJpdDe52cbkIrQes-nT3-34" value="保存vip组的信息" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-207" y="140" width="80" height="30" as="geometry" />
         </mxCell>
         <mxCell id="TJpdDe52cbkIrQes-nT3-36" value="启动录像服务" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="-372.25" y="230" width="101.5" height="30" as="geometry" />
